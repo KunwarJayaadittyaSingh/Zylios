@@ -7,6 +7,7 @@ import Markers from './pages/Markers'
 import InfoCenter from './pages/InfoCenter'
 import Teacher from './pages/Teacher'
 import ComingSoon from './pages/ComingSoon'
+import BrandSettings from './pages/BrandSettings'
 
 export default function App() {
   return (
@@ -23,6 +24,11 @@ export default function App() {
         <Route path="/showcase" element={<ComingSoon title="Showcase" />} />
         <Route path="/attendance" element={<ComingSoon title="Attendance Hub" />} />
         <Route path="/assessments" element={<ComingSoon title="Assessment Corner" />} />
+        <Route path="/internships" element={<ComingSoon title="My Internships" />} />
+        <Route path="/placements" element={<ComingSoon title="Placement Drives" />} />
+        <Route path="/project-assessor" element={<ComingSoon title="Project Assessor" />} />
+        <Route path="/vibe-store" element={<ComingSoon title="Vibe Store" />} />
+        <Route path="/admin/brand" element={<BrandSettings />} />
       </Route>
     </Routes>
   )

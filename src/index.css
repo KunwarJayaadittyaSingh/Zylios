@@ -1,16 +1,102 @@
 @import "tailwindcss";
 
+/* Palette: deep indigo night with a warm coral accent.
+   Token names are kept so every existing page picks up the new colours. */
 @theme {
-  --color-leaf: #9caf88;
-  --color-ember: #cc5500;
-  --color-olive: #454e3b;
-  --font-sans: 'Jost', system-ui, sans-serif;
-  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --color-sage: #AEB8F0;
+  --color-concrete: #A9A9BC;
+  --color-amber: #E8743B;
+  --color-olive: #262B4D;
+  --color-olive-deep: #171A33;
+  --color-cream: #F4EFE8;
+  --color-paper: #FBF8F3;
+  --color-ink: #1B1E3A;
+  --color-moss: #4A4F73;
+  --color-ember: #E8743B;
+  --color-leaf: #8F9BE0;
+  --font-display: "Cormorant Garamond", serif;
+  --font-body: "Jost", sans-serif;
 }
 
+html, body, #root { min-height: 100%; }
+
 body {
-  background-color: #fafaf8;
-  background-image: radial-gradient(#e2e2de 1px, transparent 1px);
-  background-size: 22px 22px;
-  color: #2b3024;
+  margin: 0;
+  background-color: var(--color-olive);
+  background-image:
+    radial-gradient(60rem 30rem at 85% -10%, rgb(232 116 59 / 0.12), transparent 60%),
+    radial-gradient(50rem 30rem at 0% 100%, rgb(109 91 208 / 0.18), transparent 60%);
+  background-attachment: fixed;
+  color: var(--color-cream);
+  font-family: var(--font-body);
+  font-weight: 400;
+}
+
+/* Form fields always readable, whatever page they are on */
+select, input, textarea {
+  color: var(--color-ink);
+}
+
+/* Top bar matches the page instead of a random grey */
+header {
+  background-color: var(--color-olive-deep) !important;
+  color: var(--color-cream);
+  border-bottom: 1px solid rgb(169 169 188 / 0.25);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-amber);
+  outline-offset: 3px;
+}
+
+/* ---------- Front page motion ---------- */
+
+.aurora {
+  background:
+    radial-gradient(40rem 22rem at 20% 20%, rgb(109 91 208 / 0.55), transparent 60%),
+    radial-gradient(34rem 20rem at 85% 30%, rgb(232 116 59 / 0.35), transparent 60%),
+    radial-gradient(36rem 24rem at 50% 100%, rgb(47 111 237 / 0.35), transparent 60%);
+  background-size: 140% 140%;
+  animation: aurora-drift 16s ease-in-out infinite alternate;
+}
+
+@keyframes aurora-drift {
+  from { background-position: 0% 0%, 100% 0%, 50% 100%; }
+  to   { background-position: 30% 20%, 70% 30%, 40% 80%; }
+}
+
+.marquee-track {
+  animation: marquee 40s linear infinite;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused !important;
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.halo {
+  animation: halo 2.4s ease-out infinite;
+}
+@keyframes halo {
+  from { transform: scale(1); opacity: 0.8; }
+  to   { transform: scale(1.9); opacity: 0; }
+}
+
+.float-in {
+  animation: float-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.float-in-delayed {
+  animation: float-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s both;
+}
+@keyframes float-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora, .marquee-track, .halo, .float-in, .float-in-delayed {
+    animation: none !important;
+  }
 }
