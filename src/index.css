@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+@theme {
+  --color-leaf: #9caf88;
+  --color-ember: #cc5500;
+  --color-olive: #454e3b;
+  --font-sans: 'Jost', system-ui, sans-serif;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+}
+
+body {
+  background-color: #fafaf8;
+  background-image: radial-gradient(#e2e2de 1px, transparent 1px);
+  background-size: 22px 22px;
+  color: #2b3024;
+}
