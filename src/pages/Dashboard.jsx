@@ -5,6 +5,7 @@ import {
   Building2, Trophy, ClipboardCheck, FileCheck2, BookOpen, ScanSearch,
   ShoppingBag, CalendarX2, Play, Pause, ArrowUpRight, Radio,
   Brain, Binary, MessageSquare, Atom, Sigma, Globe, Sparkles,
+  Home, Search, Mic, ArrowUp, Plus, ChevronDown, CheckCircle2,
 } from 'lucide-react'
 import WelcomeHeader from '../components/WelcomeHeader'
 
@@ -29,7 +30,7 @@ const sampleSchedule = [
   { id: 3, time: '11:30 AM - 12:20 PM', subject: 'Communication Skills', room: 'Room 8' },
 ]
 
-// Live modules shown in the moving strip. Swap this for real data later.
+// Live modules shown in the hero and the moving strip. Swap this for real data later.
 const liveModules = [
   { id: 'ai', subject: 'Elements of AI', topic: 'How machines learn', host: 'Live now', viewers: 128, icon: Brain, from: '#6D5BD0', to: '#E8743B' },
   { id: 'ds', subject: 'Data Structures', topic: 'Binary trees, step by step', host: 'Live now', viewers: 96, icon: Binary, from: '#2F6FED', to: '#7AA2FF' },
@@ -39,12 +40,21 @@ const liveModules = [
   { id: 'web', subject: 'Web Development', topic: 'Layouts with Tailwind', host: 'Live now', viewers: 112, icon: Globe, from: '#5B3FA8', to: '#C86DD7' },
 ]
 
-const pillTabs = [
-  { label: 'Today', to: '/' },
-  { label: 'Live', to: '/livebooks' },
-  { label: 'Schedule', to: '/schedule' },
-  { label: 'Dojo', to: '/dojo' },
+const askChips = [
+  { label: 'Plan my day', to: '/schedule' },
+  { label: 'Join a live module', to: '/livebooks' },
+  { label: 'Practice in the Dojo', to: '/dojo' },
+  { label: 'Check my markers', to: '/markers' },
 ]
+
+const previewTabs = [
+  { label: 'Home', to: '/', icon: Home, active: true },
+  { label: 'Live', to: '/livebooks', icon: Radio },
+  { label: 'Schedule', to: '/schedule', icon: CalendarDays },
+]
+
+// Frosted card used inside the sky-blue preview window.
+const glass = 'rounded-2xl border border-white/70 bg-white/55 p-4 backdrop-blur-sm'
 
 function ModuleArt({ module: m, className = '' }) {
   const Icon = m.icon
@@ -60,128 +70,274 @@ function ModuleArt({ module: m, className = '' }) {
   )
 }
 
-function Hero({ name, scheduleCount, playing, setPlaying, active }) {
+function Hero({ name, schedule, playing, setPlaying, active }) {
   const current = liveModules[active]
-  const next = liveModules[(active + 1) % liveModules.length]
   const firstName = name.split(' ')[0]
+  const upcoming = [1, 2, 3].map((n) => liveModules[(active + n) % liveModules.length])
+  const learnersLive = liveModules.reduce((sum, m) => sum + m.viewers, 0)
 
   return (
-    <section className="relative overflow-hidden rounded-3xl border border-cream/10 bg-olive-deep px-6 pb-40 pt-6 text-cream shadow-2xl md:px-12">
-      {/* moving aurora background */}
-      <div className="aurora pointer-events-none absolute inset-0" aria-hidden="true" />
-
-      {/* pill nav */}
-      <nav aria-label="Quick sections" className="relative z-10 mx-auto flex w-fit items-center gap-1 rounded-full border border-cream/15 bg-black/30 p-1 backdrop-blur">
-        {pillTabs.map((t, i) => (
-          <Link
-            key={t.label}
-            to={t.to}
-            className={`rounded-full px-4 py-1.5 text-xs font-medium uppercase tracking-widest transition ${
-              i === 0 ? 'bg-cream text-ink' : 'text-cream/70 hover:text-cream'
-            }`}
+    <section aria-labelledby="hero-title">
+      {/* headline */}
+      <div className="mx-auto max-w-3xl px-2 pb-10 pt-10 text-center md:pt-16">
+        <p className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-1 text-sm font-medium text-moss">
+          <Sparkles size={14} className="text-amber" aria-hidden="true" /> Welcome back, {firstName}
+        </p>
+        <h1
+          id="hero-title"
+          className="mt-6 text-5xl font-medium leading-[1.05] tracking-tight text-ink md:text-7xl"
+        >
+          Your classroom, running on its own.
+        </h1>
+        <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-ink/60">
+          Live modules, today&apos;s schedule and every tool you use, together in one calm place.
+        </p>
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <a
+            href="#live"
+            className="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-base font-medium text-white transition hover:bg-ink/85"
           >
-            {t.label}
+            <Radio size={16} aria-hidden="true" /> Explore live modules
+          </a>
+          <Link
+            to="/schedule"
+            className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-6 py-3 text-base font-medium text-ink transition hover:bg-black/[0.03]"
+          >
+            <CalendarDays size={16} aria-hidden="true" /> Open schedule
           </Link>
-        ))}
-      </nav>
-
-      <div className="relative z-10 mt-14 grid items-center gap-10 lg:grid-cols-[1.15fr_1fr]">
-        <div>
-          <p className="text-sm font-medium tracking-wide text-sage">Welcome back, {firstName}</p>
-          <h1 className="mt-3 font-display text-5xl font-medium leading-[1.02] md:text-7xl">
-            Step into the
-            <br />
-            living classroom
-          </h1>
-          <p className="mt-6 max-w-md text-base leading-relaxed text-cream/75">
-            Live modules, today&apos;s schedule and every tool you use, in one calm place.
-            Jump into a session that is running right now.
-          </p>
-
-          <div className="mt-8 flex flex-wrap items-center gap-4">
-            <a
-              href="#live"
-              className="inline-flex items-center gap-2 rounded-full bg-amber px-6 py-3 text-sm font-medium text-white shadow-lg shadow-amber/30 transition hover:brightness-110"
-            >
-              <Radio size={16} aria-hidden="true" /> Explore live modules
-            </a>
-            <Link
-              to="/schedule"
-              className="inline-flex items-center gap-2 rounded-full border border-cream/25 px-6 py-3 text-sm font-medium text-cream transition hover:bg-cream/10"
-            >
-              <CalendarDays size={16} aria-hidden="true" /> Open schedule
-            </Link>
-          </div>
-
-          <div className="mt-10 flex items-center gap-4">
-            <button
-              type="button"
-              onClick={() => setPlaying((p) => !p)}
-              aria-label={playing ? 'Pause live modules' : 'Play live modules'}
-              aria-pressed={playing}
-              className="relative flex h-14 w-14 items-center justify-center rounded-full bg-black/40 text-cream ring-1 ring-cream/30 transition hover:bg-black/60"
-            >
-              {playing && <span className="halo absolute inset-0 rounded-full ring-1 ring-cream/40" aria-hidden="true" />}
-              {playing ? <Pause size={20} /> : <Play size={20} className="translate-x-0.5" />}
-            </button>
-            <p className="text-sm text-cream/70">
-              {playing ? 'Cycling through live modules' : 'Paused. Press play to resume'}
-            </p>
-          </div>
-        </div>
-
-        {/* floating cards */}
-        <div className="relative mx-auto h-[390px] w-full max-w-md">
-          <article key={current.id} className="float-in absolute left-0 top-0 w-64 rounded-3xl bg-paper p-2.5 text-ink shadow-2xl">
-            <ModuleArt module={current} className="h-32 rounded-2xl" />
-            <div className="px-2 pb-2 pt-3">
-              <p className="flex items-center gap-1.5 text-xs font-medium text-moss">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber opacity-75" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-amber" />
-                </span>
-                {current.host}
-              </p>
-              <h2 className="mt-1 font-display text-2xl font-semibold leading-tight">{current.subject}</h2>
-              <p className="mt-1 text-sm text-moss">{current.topic}</p>
-              <div className="mt-3 flex items-center justify-between">
-                <span className="text-xs text-moss">{current.viewers} learners</span>
-                <Link
-                  to="/livebooks"
-                  aria-label={`Join ${current.subject}`}
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-ink text-cream transition hover:bg-amber"
-                >
-                  <ArrowUpRight size={18} />
-                </Link>
-              </div>
-            </div>
-          </article>
-
-          <article key={next.id} className="float-in-delayed absolute bottom-0 right-0 w-60 rounded-3xl bg-paper p-2.5 text-ink shadow-2xl">
-            <div className="px-2 pt-2">
-              <p className="text-xs font-medium uppercase tracking-widest text-moss">Up next</p>
-              <h3 className="font-display text-xl font-semibold">{next.subject}</h3>
-            </div>
-            <ModuleArt module={next} className="mt-2 h-24 rounded-2xl" />
-          </article>
-
-          <div className="absolute right-2 top-6 text-right">
-            <p className="text-xs text-cream/60">Classes today</p>
-            <p className="font-display text-3xl font-semibold">{scheduleCount}</p>
-          </div>
-          <div className="absolute right-2 top-24 text-right">
-            <p className="text-xs text-cream/60">Live modules</p>
-            <p className="font-display text-3xl font-semibold">{liveModules.length}</p>
-          </div>
         </div>
       </div>
 
-      {/* layered hills along the bottom */}
-      <svg className="pointer-events-none absolute inset-x-0 bottom-0 h-40 w-full" viewBox="0 0 1200 160" preserveAspectRatio="none" aria-hidden="true">
-        <path d="M0 110 C150 40 300 150 480 90 C650 30 800 140 980 80 C1080 50 1150 70 1200 60 L1200 160 L0 160Z" fill="#E8743B" opacity="0.18" />
-        <path d="M0 130 C200 70 340 160 540 115 C720 75 880 150 1060 105 C1130 90 1170 100 1200 95 L1200 160 L0 160Z" fill="#6D5BD0" opacity="0.35" />
-        <path d="M0 150 C220 110 380 160 600 135 C800 112 980 160 1200 130 L1200 160 L0 160Z" fill="#12142A" />
-      </svg>
+      {/* app preview window */}
+      <div className="mx-auto max-w-6xl overflow-hidden rounded-3xl border border-black/5 bg-white shadow-[0_30px_80px_-30px_rgba(40,70,140,0.35)]">
+        <div className="flex h-11 items-center gap-2 px-5" aria-hidden="true">
+          <span className="h-3 w-3 rounded-full bg-[#FF5F57]" />
+          <span className="h-3 w-3 rounded-full bg-[#FEBC2E]" />
+          <span className="h-3 w-3 rounded-full bg-[#28C840]" />
+        </div>
+
+        <div
+          className="relative overflow-hidden p-3 md:p-4"
+          style={{
+            backgroundColor: '#A9C7F5',
+            backgroundImage:
+              'radial-gradient(40rem 18rem at 15% 0%, rgba(255,255,255,0.75), transparent 60%),' +
+              'radial-gradient(34rem 16rem at 90% 40%, rgba(255,255,255,0.55), transparent 60%),' +
+              'radial-gradient(40rem 20rem at 40% 105%, rgba(255,255,255,0.7), transparent 60%),' +
+              'linear-gradient(180deg, #8DB4F2 0%, #C9DBF8 100%)',
+          }}
+        >
+          {/* preview top bar */}
+          <div className="flex flex-wrap items-center justify-between gap-2 rounded-full border border-white/70 bg-white/50 px-3 py-2 backdrop-blur-sm">
+            <span className="flex items-center gap-2 rounded-full px-2 py-1 text-sm font-medium text-ink">
+              <span className="flex h-6 w-6 items-center justify-center rounded-md bg-ink text-xs font-semibold text-white">Z</span>
+              Zylios
+              <ChevronDown size={14} className="text-ink/50" aria-hidden="true" />
+            </span>
+
+            <nav aria-label="Preview sections" className="flex items-center gap-1">
+              {previewTabs.map(({ label, to, icon: Icon, active: isActive }) => (
+                <Link
+                  key={label}
+                  to={to}
+                  className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition ${
+                    isActive ? 'bg-white text-ink shadow-sm' : 'text-ink/65 hover:bg-white/60'
+                  }`}
+                >
+                  <Icon size={15} aria-hidden="true" />
+                  <span className="hidden sm:inline">{label}</span>
+                </Link>
+              ))}
+            </nav>
+
+            <div className="flex items-center gap-1 text-ink/70">
+              <Search size={17} className="mx-2" aria-hidden="true" />
+              <Link to="/support" className="rounded-full bg-white/70 px-3 py-1 text-sm font-medium text-ink">
+                Support
+              </Link>
+            </div>
+          </div>
+
+          <div className="mt-3 grid gap-3 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.7fr)]">
+            {/* assistant panel */}
+            <div className={`${glass} flex min-h-[420px] flex-col lg:min-h-[560px]`}>
+              <div className="flex items-center gap-2 border-b border-white/70 pb-3 text-sm font-medium text-ink">
+                <Sparkles size={15} className="text-amber" aria-hidden="true" />
+                Today with Zylios
+              </div>
+
+              <div className="flex flex-1 items-center justify-center px-2 py-8 text-center">
+                <p className="text-2xl font-medium tracking-tight text-ink">What should I work on?</p>
+              </div>
+
+              <ul className="mb-3 flex gap-2 overflow-x-auto pb-1">
+                {askChips.map((c) => (
+                  <li key={c.label} className="shrink-0">
+                    <Link
+                      to={c.to}
+                      className="block rounded-full border border-white/80 bg-white/60 px-3 py-1.5 text-sm text-ink/80 transition hover:bg-white"
+                    >
+                      {c.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+
+              <Link
+                to="/dojo"
+                className="flex flex-col gap-6 rounded-2xl bg-white px-4 py-3 shadow-sm"
+                aria-label="Ask for help in the Dojo"
+              >
+                <span className="text-base text-ink/40">Ask Zylios for a hint…</span>
+                <span className="flex items-center justify-between text-ink/60">
+                  <Plus size={18} aria-hidden="true" />
+                  <span className="flex items-center gap-3">
+                    <Mic size={17} aria-hidden="true" />
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-ink/70 text-white">
+                      <ArrowUp size={16} aria-hidden="true" />
+                    </span>
+                  </span>
+                </span>
+              </Link>
+            </div>
+
+            {/* dashboard cards */}
+            <div className="grid content-start gap-3">
+              <div className={`${glass} flex items-center justify-between gap-3`}>
+                <div className="flex items-center gap-3">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-amber shadow-sm">
+                    <Sparkles size={20} aria-hidden="true" />
+                  </span>
+                  <p className="text-lg font-medium text-ink">I&apos;m here when you need me.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setPlaying((p) => !p)}
+                  aria-label={playing ? 'Pause live modules' : 'Play live modules'}
+                  aria-pressed={playing}
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-ink shadow-sm transition hover:bg-white/80"
+                >
+                  {playing ? <Pause size={16} /> : <Play size={16} className="translate-x-0.5" />}
+                </button>
+              </div>
+
+              {/* featured live module */}
+              <div className={glass}>
+                <div className="flex items-center justify-between border-b border-white/70 pb-2 text-sm font-medium text-ink">
+                  <span>Live right now</span>
+                  <Link to="/livebooks" className="text-ink/50 hover:text-ink" aria-label="See all live modules">
+                    <ArrowUpRight size={15} />
+                  </Link>
+                </div>
+                <article key={current.id} className="float-in mt-3 flex items-center gap-4">
+                  <ModuleArt module={current} className="h-20 w-28 shrink-0 rounded-xl" />
+                  <div className="min-w-0 flex-1">
+                    <p className="flex items-center gap-1.5 text-xs font-medium text-ink/60">
+                      <span className="relative flex h-2 w-2">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber opacity-75" />
+                        <span className="relative inline-flex h-2 w-2 rounded-full bg-amber" />
+                      </span>
+                      {current.host} · {current.viewers} learners
+                    </p>
+                    <h2 className="mt-1 truncate text-xl font-semibold text-ink">{current.subject}</h2>
+                    <p className="truncate text-sm text-ink/60">{current.topic}</p>
+                  </div>
+                  <Link
+                    to="/livebooks"
+                    aria-label={`Join ${current.subject}`}
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ink text-white transition hover:bg-amber"
+                  >
+                    <ArrowUpRight size={17} />
+                  </Link>
+                </article>
+              </div>
+
+              <div className="grid gap-3 md:grid-cols-2">
+                {/* today's classes */}
+                <div className={glass}>
+                  <div className="flex items-center justify-between border-b border-white/70 pb-2 text-sm font-medium text-ink">
+                    <span>Your day</span>
+                    <Link to="/schedule" className="text-ink/50 hover:text-ink" aria-label="Open schedule">
+                      <ArrowUpRight size={15} />
+                    </Link>
+                  </div>
+                  <p className="mt-3 text-sm text-ink/70">
+                    {schedule.length} {schedule.length === 1 ? 'class' : 'classes'} today
+                  </p>
+                  {schedule.length === 0 ? (
+                    <p className="mt-3 flex items-center gap-2 text-sm text-ink/60">
+                      <CalendarX2 size={16} aria-hidden="true" /> Nothing is planned yet.
+                    </p>
+                  ) : (
+                    <ul className="mt-3 space-y-2">
+                      {schedule.slice(0, 3).map((c, i) => (
+                        <li
+                          key={c.id}
+                          className="flex items-center gap-2 rounded-xl bg-white/80 px-3 py-2 text-sm text-ink"
+                        >
+                          <CheckCircle2
+                            size={16}
+                            aria-hidden="true"
+                            className={i === 0 ? 'text-emerald-600' : 'text-ink/25'}
+                          />
+                          <span className="truncate">{c.subject}</span>
+                          <span className="ml-auto shrink-0 text-xs text-ink/50">{c.time.split(' - ')[0]}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
+                {/* coming up */}
+                <div className={glass}>
+                  <div className="flex items-center justify-between border-b border-white/70 pb-2 text-sm font-medium text-ink">
+                    <span>Coming up</span>
+                    <Link to="/livebooks" className="text-ink/50 hover:text-ink" aria-label="See all live modules">
+                      <ArrowUpRight size={15} />
+                    </Link>
+                  </div>
+                  <ul className="mt-3 space-y-2">
+                    {upcoming.map((m) => {
+                      const Icon = m.icon
+                      return (
+                        <li key={m.id} className="flex items-center gap-2 rounded-xl bg-white/80 px-3 py-2 text-sm text-ink">
+                          <span
+                            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-white"
+                            style={{ backgroundImage: `linear-gradient(135deg, ${m.from}, ${m.to})` }}
+                          >
+                            <Icon size={13} aria-hidden="true" />
+                          </span>
+                          <span className="truncate">{m.subject}</span>
+                          <span className="ml-auto shrink-0 text-xs text-ink/50">{m.host}</span>
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </div>
+              </div>
+
+              {/* quick numbers */}
+              <div className={glass}>
+                <div className="border-b border-white/70 pb-2 text-sm font-medium text-ink">At a glance</div>
+                <dl className="mt-3 grid grid-cols-3 divide-x divide-white/80 text-sm">
+                  <div className="pr-3">
+                    <dt className="text-ink/55">Classes today</dt>
+                    <dd className="mt-1 text-2xl font-semibold text-ink">{schedule.length}</dd>
+                  </div>
+                  <div className="px-3">
+                    <dt className="text-ink/55">Live modules</dt>
+                    <dd className="mt-1 text-2xl font-semibold text-ink">{liveModules.length}</dd>
+                  </div>
+                  <div className="pl-3">
+                    <dt className="text-ink/55">Learners live</dt>
+                    <dd className="mt-1 text-2xl font-semibold text-ink">{learnersLive}</dd>
+                  </div>
+                </dl>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   )
 }
@@ -189,13 +345,13 @@ function Hero({ name, scheduleCount, playing, setPlaying, active }) {
 function LiveStrip({ playing }) {
   const loop = [...liveModules, ...liveModules]
   return (
-    <section id="live" aria-labelledby="live-title" className="scroll-mt-6">
+    <section id="live" aria-labelledby="live-title" className="scroll-mt-24">
       <div className="mb-3 flex items-end justify-between px-1">
         <div>
-          <h2 id="live-title" className="flex items-center gap-2 font-display text-3xl font-semibold text-cream">
+          <h2 id="live-title" className="flex items-center gap-2 text-3xl font-semibold tracking-tight text-ink">
             <Sparkles size={22} className="text-amber" aria-hidden="true" /> Live modules
           </h2>
-          <p className="text-sm text-cream/65">Different subjects, running right now. Hover to pause.</p>
+          <p className="text-sm text-ink/60">Different subjects, running right now. Hover to pause.</p>
         </div>
         <Link to="/livebooks" className="text-sm font-medium text-amber hover:underline">See all</Link>
       </div>
@@ -210,15 +366,15 @@ function LiveStrip({ playing }) {
               <Link
                 to="/livebooks"
                 tabIndex={i >= liveModules.length ? -1 : 0}
-                className="group flex w-64 flex-col overflow-hidden rounded-2xl bg-paper text-ink shadow-md transition hover:-translate-y-1 hover:shadow-xl"
+                className="group flex w-64 flex-col overflow-hidden rounded-2xl border border-black/5 bg-white text-ink shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
               >
                 <ModuleArt module={m} className="h-28" />
                 <div className="p-4">
                   <p className="flex items-center gap-1.5 text-xs font-medium text-amber">
                     <Radio size={12} aria-hidden="true" /> {m.host}
                   </p>
-                  <h3 className="mt-1 font-display text-xl font-semibold">{m.subject}</h3>
-                  <p className="text-sm text-moss">{m.topic}</p>
+                  <h3 className="mt-1 text-xl font-semibold">{m.subject}</h3>
+                  <p className="text-sm text-ink/60">{m.topic}</p>
                 </div>
               </Link>
             </li>
@@ -231,15 +387,15 @@ function LiveStrip({ playing }) {
 
 function MyDay({ items }) {
   return (
-    <section className="rounded-2xl border border-concrete/40 bg-cream p-6 shadow-sm">
-      <h2 className="font-display text-3xl font-semibold text-ink">My Day</h2>
+    <section className="rounded-2xl border border-black/5 bg-white p-6 shadow-sm">
+      <h2 className="text-3xl font-semibold tracking-tight text-ink">My Day</h2>
 
       {items.length === 0 ? (
         <div className="flex flex-col items-center py-10 text-center">
           <div className="flex h-24 w-24 items-center justify-center rounded-full bg-sage/30 ring-1 ring-sage">
             <CalendarX2 size={44} strokeWidth={1.6} className="text-olive-deep" aria-hidden="true" />
           </div>
-          <p className="mt-5 font-display text-2xl font-semibold text-ink">
+          <p className="mt-5 text-2xl font-semibold text-ink">
             Looks like nothing is planned
           </p>
           <p className="mt-1 max-w-xs text-sm text-moss">
@@ -251,7 +407,7 @@ function MyDay({ items }) {
           {items.map((c) => (
             <li
               key={c.id}
-              className="flex items-center justify-between gap-4 rounded-lg border-l-4 border-amber bg-paper px-4 py-3 ring-1 ring-concrete/30"
+              className="flex items-center justify-between gap-4 rounded-lg border-l-4 border-amber bg-paper px-4 py-3 ring-1 ring-black/5"
             >
               <div>
                 <p className="text-sm font-medium text-moss">{c.time}</p>
@@ -285,10 +441,10 @@ export default function Dashboard({
   }, [playing])
 
   return (
-    <div className="mx-auto max-w-7xl space-y-8">
+    <div className="mx-auto max-w-7xl space-y-14">
       <Hero
         name={name}
-        scheduleCount={schedule.length}
+        schedule={schedule}
         playing={playing}
         setPlaying={setPlaying}
         active={active}
@@ -310,7 +466,7 @@ export default function Dashboard({
               <Link
                 key={label}
                 to={to}
-                className="group flex flex-col items-center gap-3 rounded-xl border border-concrete/40 bg-cream p-4 text-center transition duration-200 hover:-translate-y-0.5 hover:border-amber hover:shadow-md"
+                className="group flex flex-col items-center gap-3 rounded-xl border border-black/5 bg-white p-4 text-center transition duration-200 hover:-translate-y-0.5 hover:border-amber hover:shadow-md"
               >
                 <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-sage text-olive-deep transition group-hover:bg-amber group-hover:text-white">
                   <Icon size={24} strokeWidth={1.8} />
@@ -322,13 +478,13 @@ export default function Dashboard({
 
           <Link
             to="/vibe-store"
-            className="flex items-center gap-4 rounded-xl border border-concrete/40 bg-cream p-5 transition duration-200 hover:-translate-y-0.5 hover:border-amber hover:shadow-md"
+            className="flex items-center gap-4 rounded-xl border border-black/5 bg-white p-5 transition duration-200 hover:-translate-y-0.5 hover:border-amber hover:shadow-md"
           >
             <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber text-white">
               <ShoppingBag size={24} strokeWidth={1.8} />
             </span>
             <span>
-              <span className="block font-display text-xl font-semibold text-ink">Vibe Store</span>
+              <span className="block text-xl font-semibold text-ink">Vibe Store</span>
               <span className="block text-sm text-moss">Browse and claim rewards</span>
             </span>
           </Link>

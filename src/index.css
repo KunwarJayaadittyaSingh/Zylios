@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Palette: deep indigo night with a warm coral accent.
+/* Palette: light canvas, indigo ink and a warm coral accent.
    Token names are kept so every existing page picks up the new colours. */
 @theme {
   --color-sage: #AEB8F0;
@@ -22,12 +22,8 @@ html, body, #root { min-height: 100%; }
 
 body {
   margin: 0;
-  background-color: var(--color-olive);
-  background-image:
-    radial-gradient(60rem 30rem at 85% -10%, rgb(232 116 59 / 0.12), transparent 60%),
-    radial-gradient(50rem 30rem at 0% 100%, rgb(109 91 208 / 0.18), transparent 60%);
-  background-attachment: fixed;
-  color: var(--color-cream);
+  background-color: #F7F7F5;
+  color: var(--color-ink);
   font-family: var(--font-body);
   font-weight: 400;
 }
@@ -35,13 +31,6 @@ body {
 /* Form fields always readable, whatever page they are on */
 select, input, textarea {
   color: var(--color-ink);
-}
-
-/* Top bar matches the page instead of a random grey */
-header {
-  background-color: var(--color-olive-deep) !important;
-  color: var(--color-cream);
-  border-bottom: 1px solid rgb(169 169 188 / 0.25);
 }
 
 :focus-visible {
